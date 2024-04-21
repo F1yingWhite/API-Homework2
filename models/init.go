@@ -1,6 +1,7 @@
 package models
 
 import (
+	"api2/config"
 	"fmt"
 	"log"
 	"math/rand"
@@ -25,15 +26,10 @@ func postgresDB(dsn string, config *gorm.Config) (*gorm.DB, error) {
 	return db, nil
 }
 
-func InitDB() {
+func InitDB(cfg *config.Config) {
 	var db *gorm.DB
 	var err error
 
-	//从config.yaml中读取数据库连接信息
-	cfg, err := readConfig()
-	if err != nil {
-		log.Panicf("无法读取配置文件，%s", err)
-	}
 	db, err = postgresDB(cfg.Dsn, &gorm.Config{})
 
 	if err != nil {

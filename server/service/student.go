@@ -26,6 +26,7 @@ func (s *StudentService) Handle(c *gin.Context) (any, error) {
 	if s.Page < 1 {
 		return nil, errors.New("page should be bigger than 0")
 	}
+	LogID := c.GetString("logID")
 	name := c.Query("name")
 	birth_start := c.Query("birth_start")
 	birth_end := c.Query("birth_end")
@@ -39,9 +40,9 @@ func (s *StudentService) Handle(c *gin.Context) (any, error) {
 			return nil, errors.New("birth_end format error, should be like 2006-01-02")
 		}
 		if name != "" {
-			return models.GetStudentByBirthRangeAndName(name, start, end, s.Page, s.PageSize)
+			return models.GetStudentByBirthRangeAndName(name, start, end, s.Page, s.PageSize, LogID)
 		} else {
-			return models.GetStudentByBirth(start, end, s.Page, s.PageSize)
+			return models.GetStudentByBirth(start, end, s.Page, s.PageSize, LogID)
 		}
 	}
 	if birth_start == "" && birth_end != "" {
@@ -50,9 +51,9 @@ func (s *StudentService) Handle(c *gin.Context) (any, error) {
 			return nil, errors.New("birth_end format error, should be like 2006-01-02")
 		}
 		if name != "" {
-			return models.GetStudentByNameAndBirthLessThan(name, end, s.Page, s.PageSize)
+			return models.GetStudentByNameAndBirthLessThan(name, end, s.Page, s.PageSize, LogID)
 		} else {
-			return models.GetStudentByBirthLessThan(end, s.Page, s.PageSize)
+			return models.GetStudentByBirthLessThan(end, s.Page, s.PageSize, LogID)
 		}
 	}
 	if birth_start != "" && birth_end == "" {
@@ -61,13 +62,13 @@ func (s *StudentService) Handle(c *gin.Context) (any, error) {
 			return nil, errors.New("birth_start format error, should be like 2006-01-02")
 		}
 		if name != "" {
-			return models.GetStudentByNameAndBirthBiggerThan(name, start, s.Page, s.PageSize)
+			return models.GetStudentByNameAndBirthBiggerThan(name, start, s.Page, s.PageSize, LogID)
 		} else {
-			return models.GetStudentByBirthBiggerThan(start, s.Page, s.PageSize)
+			return models.GetStudentByBirthBiggerThan(start, s.Page, s.PageSize, LogID)
 		}
 	}
 	if name != "" {
-		return models.GetStudentByName(name, s.Page, s.PageSize)
+		return models.GetStudentByName(name, s.Page, s.PageSize, LogID)
 	}
-	return models.GetStudent(s.Page, s.PageSize)
+	return models.GetStudent(s.Page, s.PageSize, LogID)
 }

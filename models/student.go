@@ -27,104 +27,102 @@ func (s *Student) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func GetStudent(page int, page_size int) ([]Student, error) {
-	logPrefix := fmt.Sprintf("[models/Student]: GetStudent(page: %d, page_size: %d)", page, page_size)
-	log.Printf("%s: 正在查询...", logPrefix)
+func GetStudent(page int, page_size int, LogID string) ([]Student, error) {
+	logPrefix := fmt.Sprintf("[LogID:%s] [models/Student]: GetStudent(page: %d, page_size: %d)", LogID, page, page_size)
 
 	var students []Student
 	if err := DB.Offset((page - 1) * page_size).Limit(page_size).Find(&students).Error; err != nil {
-		log.Printf("%s: 查询失败，%s", logPrefix, err)
+		log.Printf("[LogID:%s] %s: 查询失败，%s", LogID, logPrefix, err)
 		return nil, err
 	}
-	log.Printf("%s: 查询成功", logPrefix)
+	log.Printf("[LogID:%s] %s: 查询成功", LogID, logPrefix)
 	return students, nil
 }
 
-func GetStudentByName(name string, page int, page_size int) ([]Student, error) {
-	logPrefix := fmt.Sprintf("[models/Student]: GetStudentByName(name: %s, page: %d, page_size: %d)", name, page, page_size)
-	log.Printf("%s: 正在查询...", logPrefix)
+func GetStudentByName(name string, page int, page_size int, LogID string) ([]Student, error) {
+	logPrefix := fmt.Sprintf("[LogID:%s] [models/Student]: GetStudentByName(name: %s, page: %d, page_size: %d)", LogID, name, page, page_size)
 
 	var students []Student
 	if err := DB.Where("name like ?", name+"%").Offset((page - 1) * page_size).Limit(page_size).Find(&students).Error; err != nil {
-		log.Printf("%s: 查询失败，%s", logPrefix, err)
+		log.Printf("[LogID:%s] %s: 查询失败，%s", LogID, logPrefix, err)
 		return nil, err
 	}
-	log.Printf("%s: 查询成功", logPrefix)
+	log.Printf("[LogID:%s] %s: 查询成功", LogID, logPrefix)
 	return students, nil
 }
 
-func GetStudentByBirth(start time.Time, end time.Time, page int, page_size int) ([]Student, error) {
-	logPrefix := fmt.Sprintf("[models/Student]: GetStudentByBirth(start: %s, end: %s, page: %d, page_size: %d)", start.Format("2006-01-02"), end.Format("2006-01-02"), page, page_size)
-	log.Printf("%s: 正在查询...", logPrefix)
+func GetStudentByBirth(start time.Time, end time.Time, page int, page_size int, LogID string) ([]Student, error) {
+	logPrefix := fmt.Sprintf("[LogID:%s] [models/Student]: GetStudentByBirth(start: %s, end: %s, page: %d, page_size: %d)", LogID, start.Format("2006-01-02"), end.Format("2006-01-02"), page, page_size)
+
 	var students []Student
 	if err := DB.Where("birth between ? and ?", start, end).Offset((page - 1) * page_size).Limit(page_size).Find(&students).Error; err != nil {
-		log.Printf("%s: 查询失败，%s", logPrefix, err)
+		log.Printf("[LogID:%s] %s: 查询失败，%s", LogID, logPrefix, err)
 		return nil, err
 	}
-	log.Printf("%s: 查询成功", logPrefix)
+	log.Printf("[LogID:%s] %s: 查询成功", LogID, logPrefix)
 	return students, nil
 }
 
-func GetStudentByBirthRangeAndName(name string, start time.Time, end time.Time, page int, page_size int) ([]Student, error) {
-	logPrefix := fmt.Sprintf("[models/Student]: GetStudentByBirthRangeAndName(name: %s, start: %s, end: %s, page: %d, page_size: %d)", name, start.Format("2006-01-02"), end.Format("2006-01-02"), page, page_size)
-	log.Printf("%s: 正在查询...", logPrefix)
+func GetStudentByBirthRangeAndName(name string, start time.Time, end time.Time, page int, page_size int, LogID string) ([]Student, error) {
+	logPrefix := fmt.Sprintf("[LogID:%s] [models/Student]: GetStudentByBirthRangeAndName(name: %s, start: %s, end: %s, page: %d, page_size: %d)", LogID, name, start.Format("2006-01-02"), end.Format("2006-01-02"), page, page_size)
+
 	var students []Student
 	if err := DB.Where("name like ? and birth between ? and ?", name+"%", start, end).Offset((page - 1) * page_size).Limit(page_size).Find(&students).Error; err != nil {
-		log.Printf("%s: 查询失败，%s", logPrefix, err)
+		log.Printf("[LogID:%s] %s: 查询失败，%s", LogID, logPrefix, err)
 		return nil, err
 	}
-	log.Printf("%s: 查询成功", logPrefix)
+	log.Printf("[LogID:%s] %s: 查询成功", LogID, logPrefix)
 	return students, nil
 }
 
 // 查询姓名和出生日期大于指定日期的学生
-func GetStudentByNameAndBirthBiggerThan(name string, birth time.Time, page int, page_size int) ([]Student, error) {
-	logPrefix := fmt.Sprintf("[models/Student]: GetStudentByNameAndBirthBiggerThan(name: %s, birth: %s, page: %d, page_size: %d)", name, birth.Format("2006-01-02"), page, page_size)
-	log.Printf("%s: 正在查询...", logPrefix)
+func GetStudentByNameAndBirthBiggerThan(name string, birth time.Time, page int, page_size int, LogID string) ([]Student, error) {
+	logPrefix := fmt.Sprintf("[LogID:%s] [models/Student]: GetStudentByNameAndBirthBiggerThan(name: %s, birth: %s, page: %d, page_size: %d)", name, birth.Format("2006-01-02"), LogID, page, page_size)
+
 	var students []Student
 	if err := DB.Where("name = ? and birth >= ?", name, birth).Offset((page - 1) * page_size).Limit(page_size).Find(&students).Error; err != nil {
-		log.Printf("%s: 查询失败，%s", logPrefix, err)
+		log.Printf("[LogID:%s]  %s: 查询失败，%s", LogID, logPrefix, err)
 		return nil, err
 	}
-	log.Printf("%s: 查询成功", logPrefix)
+	log.Printf("[LogID:%s] %s: 查询成功", LogID, logPrefix)
 	return students, nil
 }
 
 // 查询姓名和出生日期小于指定日期的学生
-func GetStudentByNameAndBirthLessThan(name string, birth time.Time, page int, page_size int) ([]Student, error) {
-	logPrefix := fmt.Sprintf("[models/Student]: GetStudentByNameAndBirthLessThan(name: %s, birth: %s, page: %d, page_size: %d)", name, birth.Format("2006-01-02"), page, page_size)
-	log.Printf("%s: 正在查询...", logPrefix)
+func GetStudentByNameAndBirthLessThan(name string, birth time.Time, page int, page_size int, LogID string) ([]Student, error) {
+	logPrefix := fmt.Sprintf("[LogID:%s] [models/Student]: GetStudentByNameAndBirthLessThan(name: %s, birth: %s, page: %d, page_size: %d)", name, birth.Format("2006-01-02"), LogID, page, page_size)
+
 	var students []Student
 	if err := DB.Where("name = ? and birth <= ?", name, birth).Offset((page - 1) * page_size).Limit(page_size).Find(&students).Error; err != nil {
-		log.Printf("%s: 查询失败，%s", logPrefix, err)
+		log.Printf("[LogID:%s] %s: 查询失败，%s", LogID, logPrefix, err)
 		return nil, err
 	}
-	log.Printf("%s: 查询成功", logPrefix)
+	log.Printf("[LogID:%s] %s: 查询成功", LogID, logPrefix)
 	return students, nil
 }
 
 // 查询出生日期大于指定日期的学生
-func GetStudentByBirthBiggerThan(birth time.Time, page int, page_size int) ([]Student, error) {
-	logPrefix := fmt.Sprintf("[models/Student]: GetStudentByBirthBiggerThan(birth: %s, page: %d, page_size: %d)", birth.Format("2006-01-02"), page, page_size)
-	log.Printf("%s: 正在查询...", logPrefix)
+func GetStudentByBirthBiggerThan(birth time.Time, page int, page_size int, LogID string) ([]Student, error) {
+	logPrefix := fmt.Sprintf("[LogID:%s] [models/Student]: GetStudentByBirthBiggerThan(birth: %s, page: %d, page_size: %d)", birth.Format("2006-01-02"), LogID, page, page_size)
+
 	var students []Student
 	if err := DB.Where("birth >= ?", birth).Offset((page - 1) * page_size).Limit(page_size).Find(&students).Error; err != nil {
-		log.Printf("%s: 查询失败，%s", logPrefix, err)
+		log.Printf("[LogID:%s] %s: 查询失败，%s", LogID, logPrefix, err)
 		return nil, err
 	}
-	log.Printf("%s: 查询成功", logPrefix)
+	log.Printf("[LogID:%s] %s: 查询成功", LogID, logPrefix)
 	return students, nil
 }
 
 // 查询出生日期小于指定日期的学生
-func GetStudentByBirthLessThan(birth time.Time, page int, page_size int) ([]Student, error) {
-	logPrefix := fmt.Sprintf("[models/Student]: GetStudentByBirthLessThan(birth: %s, page: %d, page_size: %d)", birth.Format("2006-01-02"), page, page_size)
-	log.Printf("%s: 正在查询...", logPrefix)
+func GetStudentByBirthLessThan(birth time.Time, page int, page_size int, LogID string) ([]Student, error) {
+	logPrefix := fmt.Sprintf("[LogID:%s] [models/Student]: GetStudentByBirthLessThan(birth: %s, page: %d, page_size: %d)", birth.Format("2006-01-02"), LogID, page, page_size)
+
 	var students []Student
 	if err := DB.Where("birth <= ?", birth).Offset((page - 1) * page_size).Limit(page_size).Find(&students).Error; err != nil {
-		log.Printf("%s: 查询失败，%s", logPrefix, err)
+		log.Printf("[LogID:%s] %s: 查询失败，%s", LogID, logPrefix, err)
 		return nil, err
 	}
-	log.Printf("%s: 查询成功", logPrefix)
+	log.Printf("[LogID:%s] %s: 查询成功", LogID, logPrefix)
 	return students, nil
 }
