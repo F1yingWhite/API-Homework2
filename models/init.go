@@ -45,7 +45,7 @@ func InitDB() {
 	//查询21301172学号的学生信息，如果为空，则创建10万条学生信息
 	var student Student
 	DB.Where("student_no = ?", 21301172).First(&student)
-	if student.ID == 0 {
+	if student.Id == 0 {
 		CreateStudent()
 	}
 }
