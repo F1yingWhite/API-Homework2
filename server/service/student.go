@@ -2,6 +2,7 @@ package service
 
 import (
 	"api2/models"
+	"errors"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -17,13 +18,13 @@ type StudentService struct {
 
 func (s *StudentService) Handle(c *gin.Context) (any, error) {
 	if s.PageSize < 1 {
-		s.PageSize = 1
+		return nil, errors.New("page_size should be bigger than 0")
 	}
 	if s.PageSize > 1000 {
 		s.PageSize = 1000
 	}
 	if s.Page < 1 {
-		s.Page = 1
+		return nil, errors.New("page should be bigger than 0")
 	}
 	name := c.Query("name")
 	birth_start := c.Query("birth_start")
@@ -31,11 +32,11 @@ func (s *StudentService) Handle(c *gin.Context) (any, error) {
 	if birth_start != "" && birth_end != "" {
 		start, err := time.Parse("2006-01-02", s.BirthStart)
 		if err != nil {
-			return nil, err
+			return nil, errors.New("birth_start format error, should be like 2006-01-02")
 		}
 		end, err := time.Parse("2006-01-02", s.BirthEnd)
 		if err != nil {
-			return nil, err
+			return nil, errors.New("birth_end format error, should be like 2006-01-02")
 		}
 		if name != "" {
 			return models.GetStudentByBirthRangeAndName(name, start, end, s.Page, s.PageSize)
@@ -46,7 +47,7 @@ func (s *StudentService) Handle(c *gin.Context) (any, error) {
 	if birth_start == "" && birth_end != "" {
 		end, err := time.Parse("2006-01-02", s.BirthEnd)
 		if err != nil {
-			return nil, err
+			return nil, errors.New("birth_end format error, should be like 2006-01-02")
 		}
 		if name != "" {
 			return models.GetStudentByNameAndBirthLessThan(name, end, s.Page, s.PageSize)
@@ -57,7 +58,7 @@ func (s *StudentService) Handle(c *gin.Context) (any, error) {
 	if birth_start != "" && birth_end == "" {
 		start, err := time.Parse("2006-01-02", s.BirthStart)
 		if err != nil {
-			return nil, err
+			return nil, errors.New("birth_start format error, should be like 2006-01-02")
 		}
 		if name != "" {
 			return models.GetStudentByNameAndBirthBiggerThan(name, start, s.Page, s.PageSize)
