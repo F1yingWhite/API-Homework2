@@ -18,7 +18,7 @@ func Logger() gin.HandlerFunc {
 
 		elapsedTime := time.Since(startTime)
 
-		log.Printf("[LogID] %s Method: %s, URI: %s, IP: %s, Status: %d, ElapsedTime: %v, UserAgent: %s, Errors: %v",
+		log.Printf("[LogID:%s] Method: %s, URI: %s, IP: %s, Status: %d, ElapsedTime: %v, UserAgent: %s, Errors: %v",
 			logID,
 			c.Request.Method,
 			c.Request.RequestURI,
