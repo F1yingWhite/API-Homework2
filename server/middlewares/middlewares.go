@@ -17,16 +17,26 @@ func Logger() gin.HandlerFunc {
 		c.Next()
 
 		elapsedTime := time.Since(startTime)
-
-		log.Printf("[LogID:%s] Method: %s, URI: %s, IP: %s, Status: %d, ElapsedTime: %v, UserAgent: %s, Errors: %v",
-			logID,
-			c.Request.Method,
-			c.Request.RequestURI,
-			c.ClientIP(),
-			c.Writer.Status(),
-			elapsedTime,
-			c.Request.UserAgent(),
-			c.Errors.ByType(gin.ErrorTypePrivate),
-		)
+		//如果有错误就打印错误
+		if len(c.Errors) > 0 {
+			log.Printf("[LogID:%s] Method: %s, URI: %s, Status: %d, ElapsedTime: %v, UserAgent: %s, Errors: %v",
+				logID,
+				c.Request.Method,
+				c.Request.RequestURI,
+				c.Writer.Status(),
+				elapsedTime,
+				c.Request.UserAgent(),
+				c.Errors.ByType(gin.ErrorTypePrivate),
+			)
+		} else {
+			log.Printf("[LogID:%s] Method: %s, URI: %s, Status: %d, ElapsedTime: %v, UserAgent: %s",
+				logID,
+				c.Request.Method,
+				c.Request.RequestURI,
+				c.Writer.Status(),
+				elapsedTime,
+				c.Request.UserAgent(),
+			)
+		}
 	}
 }
