@@ -2,6 +2,7 @@ package service
 
 import (
 	"api2/utils"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -37,31 +38,41 @@ func HandlerBindQuery(s Service) gin.HandlerFunc {
 func HandlerWithBindType(s Service, bindType int) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var err error
-
+		LogID := c.GetString("logID")
 		if bindType&BindUri != 0 {
 			if err = c.ShouldBindUri(s); err != nil {
-				c.JSON(http.StatusBadRequest, utils.ErrorResponse(err))
+				response := utils.ErrorResponse(err)
+				log.Printf("[LogID:%s] Response: %s", LogID, response.ErrorStr)
+				c.JSON(http.StatusBadRequest, response)
 				return
 			}
 		}
 		if bindType&Bind != 0 {
 			if err = c.ShouldBind(s); err != nil {
-				c.JSON(http.StatusBadRequest, utils.ErrorResponse(err))
+				response := utils.ErrorResponse(err)
+				log.Printf("[LogID:%s] Response: %s", LogID, response.ErrorStr)
+				c.JSON(http.StatusBadRequest, response)
 				return
 			}
 		}
 		if bindType&BindQuery != 0 {
 			if err = c.ShouldBindQuery(s); err != nil {
-				c.JSON(http.StatusBadRequest, utils.ErrorResponse(err))
+				response := utils.ErrorResponse(err)
+				log.Printf("[LogID:%s] Response: %s", LogID, response.ErrorStr)
+				c.JSON(http.StatusBadRequest, response)
 				return
 			}
 		}
 
 		res, err := s.Handle(c)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, utils.ErrorResponse(err))
+			response := utils.ErrorResponse(err)
+			log.Printf("[LogID:%s] Response: %s", LogID, response.ErrorStr)
+			c.JSON(http.StatusBadRequest, response)
 		} else {
-			c.JSON(http.StatusOK, utils.Response(res))
+			response := utils.Response(res)
+			log.Printf("[LogID:%s] Response: %v", LogID, response)
+			c.JSON(http.StatusOK, response)
 		}
 	}
 }

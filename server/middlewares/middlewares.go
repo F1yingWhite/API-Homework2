@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"bytes"
+	"io"
 	"log"
 	"time"
 
@@ -13,30 +15,22 @@ func Logger() gin.HandlerFunc {
 		logID := uuid.New().String()
 		c.Set("logID", logID)
 		startTime := time.Now()
-
+		// 打印body
+		body, _ := c.GetRawData()
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+		log.Printf("[LogID:%s] Request: %s", logID, string(body))
 		c.Next()
 
 		elapsedTime := time.Since(startTime)
+
 		//如果有错误就打印错误
-		if len(c.Errors) > 0 {
-			log.Printf("[LogID:%s] Method: %s, URI: %s, Status: %d, ElapsedTime: %v, UserAgent: %s, Errors: %v",
-				logID,
-				c.Request.Method,
-				c.Request.RequestURI,
-				c.Writer.Status(),
-				elapsedTime,
-				c.Request.UserAgent(),
-				c.Errors.ByType(gin.ErrorTypePrivate),
-			)
-		} else {
-			log.Printf("[LogID:%s] Method: %s, URI: %s, Status: %d, ElapsedTime: %v, UserAgent: %s",
-				logID,
-				c.Request.Method,
-				c.Request.RequestURI,
-				c.Writer.Status(),
-				elapsedTime,
-				c.Request.UserAgent(),
-			)
-		}
+		log.Printf("[LogID:%s] %s %s %d %v %s",
+			logID,
+			c.Request.Method,
+			c.Request.RequestURI,
+			c.Writer.Status(),
+			elapsedTime,
+			c.Request.UserAgent(),
+		)
 	}
 }
