@@ -3,6 +3,7 @@ package server
 import (
 	"api2/server/middlewares"
 	"api2/server/service"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -20,10 +21,11 @@ func InitRouter() *gin.Engine {
 
 	api := r.Group("api")
 	api.Use(gin.Recovery())
+	api.Use(middlewares.RateLimitMiddleware(time.Second, 10, 10)) //一秒放10个令牌,就是一10qps
 	api.Use(middlewares.Logger())
 	{
 		//学生信息查询接口
-		student := api.Group("student") 
+		student := api.Group("student")
 		{
 			// GET /api/student?name=?&page=?&page_size=?&birth_start=?&birth_end=? | 查询学生信息
 			student.GET("", service.HandlerBindQuery(&service.StudentService{}))

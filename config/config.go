@@ -15,6 +15,33 @@ type Config struct {
 }
 
 func ReadConfig() (*Config, error) {
+	_, err := os.Stat("config.yaml")
+	if os.IsNotExist(err) {
+		f, err := os.Create("config.yaml")
+		if err != nil {
+			return nil, err
+		}
+
+		config := &Config{
+			Dsn:     "host=localhost user=postgres password=123 dbname=API2 port=5432 sslmode=disable",
+			LogFile: "log.txt",
+		}
+
+		data, err := yaml.Marshal(&config)
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = f.Write(data)
+		if err != nil {
+			return nil, err
+		}
+
+		err = f.Close()
+		if err != nil {
+			return nil, err
+		}
+	}
 	f, err := os.Open("config.yaml")
 	if err != nil {
 		return nil, err
