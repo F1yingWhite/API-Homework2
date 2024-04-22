@@ -7,10 +7,15 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func InitRouter() *gin.Engine {
 	r := gin.New()
+
+	// Prometheus端点
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
 	//一些基础配置
 	config := cors.DefaultConfig()
 	config.ExposeHeaders = []string{"Authorization"}
@@ -21,7 +26,8 @@ func InitRouter() *gin.Engine {
 
 	api := r.Group("api")
 	api.Use(gin.Recovery())
-	api.Use(middlewares.RateLimitMiddleware(time.Second, 10, 10)) //一秒放10个令牌,就是一10qps
+	api.Use(middlewares.RateLimitMiddleware(time.Second, 100, 10)) //一秒放10个令牌,就是一10qps
+	api.Use(middlewares.RequestCounterMiddleware())
 	api.Use(middlewares.Logger())
 	{
 		//学生信息查询接口

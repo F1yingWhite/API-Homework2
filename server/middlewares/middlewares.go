@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sync/atomic"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -41,6 +42,15 @@ func RateLimitMiddleware(fillInterval time.Duration, cap, quantum int64) gin.Han
 			c.Abort()
 			return
 		}
+		c.Next()
+	}
+}
+
+var RequestCounter int64
+
+func RequestCounterMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		atomic.AddInt64(&RequestCounter, 1)
 		c.Next()
 	}
 }
