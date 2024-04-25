@@ -2,6 +2,7 @@ package service
 
 import (
 	"api2/utils"
+	"errors"
 	"log"
 	"net/http"
 
@@ -41,7 +42,7 @@ func HandlerWithBindType(s Service, bindType int) gin.HandlerFunc {
 		LogID := c.GetString("logID")
 		if bindType&BindUri != 0 {
 			if err = c.ShouldBindUri(s); err != nil {
-				response := utils.ErrorResponse(err)
+				response := utils.ErrorResponse(errors.New("参数类型错误"))
 				log.Printf("[LogID:%s] Response: %s", LogID, response.ErrorStr)
 				c.JSON(http.StatusBadRequest, response)
 				return
@@ -49,7 +50,7 @@ func HandlerWithBindType(s Service, bindType int) gin.HandlerFunc {
 		}
 		if bindType&Bind != 0 {
 			if err = c.ShouldBind(s); err != nil {
-				response := utils.ErrorResponse(err)
+				response := utils.ErrorResponse(errors.New("参数类型错误"))
 				log.Printf("[LogID:%s] Response: %s", LogID, response.ErrorStr)
 				c.JSON(http.StatusBadRequest, response)
 				return
@@ -57,7 +58,7 @@ func HandlerWithBindType(s Service, bindType int) gin.HandlerFunc {
 		}
 		if bindType&BindQuery != 0 {
 			if err = c.ShouldBindQuery(s); err != nil {
-				response := utils.ErrorResponse(err)
+				response := utils.ErrorResponse(errors.New("参数类型错误"))
 				log.Printf("[LogID:%s] Response: %s", LogID, response.ErrorStr)
 				c.JSON(http.StatusBadRequest, response)
 				return
@@ -66,7 +67,7 @@ func HandlerWithBindType(s Service, bindType int) gin.HandlerFunc {
 
 		res, err := s.Handle(c)
 		if err != nil {
-			response := utils.ErrorResponse(err)
+			response := utils.ErrorResponse(errors.New("参数类型错误"))
 			log.Printf("[LogID:%s] Response: %s", LogID, response.ErrorStr)
 			c.JSON(http.StatusBadRequest, response)
 		} else {

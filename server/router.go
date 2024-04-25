@@ -7,6 +7,20 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+)
+
+var (
+	MetricHttpRequestTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "promdemo",
+			Subsystem: "demo",
+			Name:      "http_request_total",
+			Help:      "http request total",
+		},
+		[]string{"from"},
+	)
 )
 
 func InitRouter() *gin.Engine {
@@ -19,11 +33,11 @@ func InitRouter() *gin.Engine {
 	config.AllowAllOrigins = true
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 	r.Use(cors.New(config))
-
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	api := r.Group("api")
 	api.Use(gin.Recovery())
-	api.Use(middlewares.RateLimitMiddleware(time.Second, 100, 10)) //一秒放10个令牌,就是一10qps
 	api.Use(middlewares.RequestCounterMiddleware())
+	api.Use(middlewares.RateLimitMiddleware(time.Second, 100, 10)) //一秒放10个令牌,就是一10qps
 	api.Use(middlewares.Logger())
 	{
 		//学生信息查询接口
