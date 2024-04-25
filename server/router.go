@@ -7,14 +7,10 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func InitRouter() *gin.Engine {
 	r := gin.New()
-
-	// Prometheus端点
-	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	//一些基础配置
 	config := cors.DefaultConfig()
